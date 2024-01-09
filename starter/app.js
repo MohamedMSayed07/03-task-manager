@@ -1,10 +1,13 @@
 const express = require('express');
 const app = express();
 const tasksRoutes = require('./routes/tasksRoutes');
+const connectDB = require('./db/connect');
+// To use .env variables (environment vars)
+const dotenv = require('dotenv').config();
 
 
 // middleware
-
+// Middleware to parse JSON in the request body
 app.use(express.json());
 
 
@@ -25,4 +28,14 @@ app.use('/api/v1/tasks',tasksRoutes);
 
 const port = 3000;
 
-app.listen(port, console.log(`Server is listening on port ${port}...`));
+
+const start = async () => {
+  try {
+    await connectDB(process.env.MONGO_URI);
+    app.listen(port, () => {console.log(`Server is listening on port ${port}...`)});
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+start();
