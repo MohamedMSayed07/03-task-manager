@@ -1,22 +1,61 @@
+const Task = require('../models/taskModel');
 
-
-module.exports.getAllTasks = (req, res) => {
-  res.send('All items from the file');
+module.exports.getAllTasks = async (req, res) => {
+  try {
+    const tasks = await Task.find();
+    res.status(200).json({tasks});
+  } catch(err) {
+    res.status(500).json({msg:err});
+  }
 };
 
-module.exports.createTask = (req, res) => {
-  res.send('Create Task');
+module.exports.createTask = async (req, res) => {
+  try {
+    const task = await Task.create(req.body);
+    res.status(201).json({task});
+  } catch(err) {
+    res.status(500).json({msg:err});
+  }
 };
 
-module.exports.getTask = (req, res) => {
-  res.send('One Task');
+module.exports.getTask = async (req, res) => {
+  try {
+    const task = await Task.findById(req.params.id);
+    
+    if(!task) 
+      return res.status(404).json({msg: `No task with id: ${req.params.id}`});
+
+    res.status(200).json({task});
+
+  } catch(err) {
+    res.status(500).json({msg:err});
+  }
 };
 
-module.exports.updateTask = (req, res) => {
-  res.send('Edit Task');
+module.exports.deleteTask = async (req, res) => {
+  try {
+    const task = await Task.findByIdAndDelete(req.params.id);
+    
+    if(!task) 
+      return res.status(404).json({msg: `No task with id: ${req.params.id}`});
+
+    res.status(200).json({task});
+
+  } catch(err) {
+    res.status(500).json({msg:err});
+  }
 };
 
-module.exports.deleteTask = (req, res) => {
-  res.send('Delete Task');
-};
+module.exports.updateTask = async (req, res) => {
+  try {
+    const task = await Task.findByIdAndUpdate(req.params.id, req.body, {new: true, runValidators: true});
+    
+    if(!task) 
+      return res.status(404).json({msg: `No task with id: ${req.params.id}`});
 
+    res.status(200).json({task});
+
+  } catch(err) {
+    res.status(500).json({msg:err});
+  }
+};
