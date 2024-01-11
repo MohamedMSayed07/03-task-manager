@@ -4,6 +4,8 @@ const tasksRoutes = require('./routes/tasksRoutes');
 const connectDB = require('./db/connect');
 // To use .env variables (environment vars)
 const dotenv = require('dotenv').config();
+const notFound = require('./middleware/not-found');
+const errorHandler = require('./middleware/error-handler');
 
 
 // middleware
@@ -21,13 +23,11 @@ app.get('/', (req, res, next) => {
 
 app.use('/api/v1/tasks',tasksRoutes);
 
-// app.get('/api/v1/tasks')
-// app.post('/api/v1/tasks')
-// app.get('/api/v1/tasks/:id')
-// app.patch('/api/v1/tasks/:id')
-// app.delete('/api/v1/tasks/:id')
 
-const port = 3000;
+app.use(notFound);
+app.use(errorHandler);
+
+const port = process.env.PORT || 3000;
 
 
 const start = async () => {
